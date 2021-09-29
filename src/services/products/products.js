@@ -1,6 +1,5 @@
 import express from "express";
 import s from "sequelize";
-import sequelize from "../../db/start.js";
 import db from "../../db/modules/connect.js";
 const { Op } = s;
 const { Product, Review } = db;
@@ -15,7 +14,7 @@ products
         include: Review,
         where: req.query.search
           ? {
-              [Op.or]: [{ name: { [Op.iLike]: `%${req.params.search}%` } }],
+              [Op.or]: [{ name: { [Op.iLike]: `%${req.query.search}%` } }],
             }
           : {},
       });
@@ -36,7 +35,10 @@ products
   .route("/:id")
   .get(async (req, res, next) => {
     try {
-      const data = await Product.findByPk(req.params.id);
+      const data = await Product.findAll({
+        include: Review,
+        where: { id: req.params.id },
+      });
       res.send(data);
     } catch (error) {
       console.log(error);
