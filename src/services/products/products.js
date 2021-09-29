@@ -12,9 +12,13 @@ products
     try {
       const data = await Product.findAll({
         include: Review,
+        order: [["price", "ASC"]],
         where: req.query.search
           ? {
-              [Op.or]: [{ name: { [Op.iLike]: `%${req.query.search}%` } }],
+              [Op.or]: [
+                { name: { [Op.iLike]: `%${req.query.search}%` } },
+                { category: { [Op.iLike]: `%${req.query.search}%` } },
+              ],
             }
           : {},
       });
